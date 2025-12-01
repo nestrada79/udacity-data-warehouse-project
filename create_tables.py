@@ -1,6 +1,9 @@
 import configparser
 import psycopg2
 from sql_queries import create_table_queries, drop_table_queries
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 
 def drop_tables(cur, conn):
@@ -33,11 +36,12 @@ def main():
     config = configparser.ConfigParser()
     config.read('dwh.cfg')
 
-    host = config.get("CLUSTER", "HOST")
+    host = os.getenv("REDSHIFT_HOST")
     dbname = config.get("CLUSTER", "DB_NAME")
     user = config.get("CLUSTER", "DB_USER")
-    password = config.get("CLUSTER", "DB_PASSWORD")
-    port = config.get("CLUSTER", "DB_PORT")
+    password = os.getenv("REDSHIFT_PASSWORD")
+    port = int(config.get("CLUSTER", "DB_PORT"))
+
 
     print("Connecting to Redshift cluster...")
     conn_string = f"host={host} dbname={dbname} user={user} password={password} port={port}"

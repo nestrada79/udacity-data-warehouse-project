@@ -19,99 +19,114 @@ song_table_drop = "DROP TABLE IF EXISTS songs;"
 artist_table_drop = "DROP TABLE IF EXISTS artists;"
 time_table_drop = "DROP TABLE IF EXISTS time;"
 
+
+# CREATE TABLES
+
+# STAGING TABLES
+
 staging_events_table_create = ("""
 CREATE TABLE IF NOT EXISTS staging_events (
-    artist          VARCHAR,
-    auth            VARCHAR,
-    firstName       VARCHAR,
-    gender          VARCHAR,
+    artist          VARCHAR(1024),
+    auth            VARCHAR(50),
+    firstName       VARCHAR(100),
+    gender          VARCHAR(10),
     itemInSession   INTEGER,
-    lastName        VARCHAR,
+    lastName        VARCHAR(100),
     length          FLOAT,
-    level           VARCHAR,
-    location        VARCHAR,
-    method          VARCHAR,
-    page            VARCHAR,
+    level           VARCHAR(50),
+    location        VARCHAR(1024),
+    method          VARCHAR(10),
+    page            VARCHAR(50),
     registration    BIGINT,
     sessionId       INTEGER,
-    song            VARCHAR,
+    song            VARCHAR(1024),
     status          INTEGER,
     ts              BIGINT,
-    userAgent       VARCHAR,
-    userId          VARCHAR
+    userAgent       VARCHAR(1024),
+    userId          INTEGER
 );
 """)
 
 staging_songs_table_create = ("""
 CREATE TABLE IF NOT EXISTS staging_songs (
     num_songs        INTEGER,
-    artist_id        VARCHAR,
+    artist_id        VARCHAR(50),
     artist_latitude  FLOAT,
     artist_longitude FLOAT,
-    artist_location  VARCHAR,
-    artist_name      VARCHAR,
-    song_id          VARCHAR,
-    title            VARCHAR,
+    artist_location  VARCHAR(1024),
+    artist_name      VARCHAR(1024),
+    song_id          VARCHAR(50),
+    title            VARCHAR(1024),
     duration         FLOAT,
     year             INTEGER
 );
 """)
 
+
+# STAR SCHEMA TABLES
+
+
+# Fact Table
 songplay_table_create = ("""
 CREATE TABLE IF NOT EXISTS songplays (
-    songplay_id   INTEGER IDENTITY(0,1) PRIMARY KEY,
-    start_time    TIMESTAMP NOT NULL SORTKEY,
-    user_id       VARCHAR NOT NULL,
-    level         VARCHAR,
-    song_id       VARCHAR,
-    artist_id     VARCHAR,
-    session_id    INTEGER,
-    location      VARCHAR,
-    user_agent    VARCHAR
+    songplay_id     INTEGER IDENTITY(0,1) PRIMARY KEY,
+    start_time      TIMESTAMP NOT NULL SORTKEY,
+    user_id         INTEGER NOT NULL,
+    level           VARCHAR(50),
+    song_id         VARCHAR(50),
+    artist_id       VARCHAR(50),
+    session_id      INTEGER,
+    location        VARCHAR(1024),
+    user_agent      VARCHAR(1024)
 );
 """)
 
+# Dimension Table: Users
 user_table_create = ("""
 CREATE TABLE IF NOT EXISTS users (
-    user_id     VARCHAR PRIMARY KEY,
-    first_name  VARCHAR,
-    last_name   VARCHAR,
-    gender      VARCHAR,
-    level       VARCHAR
+    user_id     INTEGER PRIMARY KEY,
+    first_name  VARCHAR(100),
+    last_name   VARCHAR(100),
+    gender      VARCHAR(10),
+    level       VARCHAR(50)
 );
 """)
 
+# Dimension Table: Songs
 song_table_create = ("""
 CREATE TABLE IF NOT EXISTS songs (
-    song_id    VARCHAR PRIMARY KEY,
-    title      VARCHAR,
-    artist_id  VARCHAR,
-    year       INTEGER,
-    duration   FLOAT
+    song_id     VARCHAR(50) PRIMARY KEY,
+    title       VARCHAR(1024),
+    artist_id   VARCHAR(50),
+    year        INTEGER,
+    duration    FLOAT
 );
 """)
 
+# Dimension Table: Artists
 artist_table_create = ("""
 CREATE TABLE IF NOT EXISTS artists (
-    artist_id  VARCHAR PRIMARY KEY,
-    name       VARCHAR,
-    location   VARCHAR,
-    latitude   FLOAT,
-    longitude  FLOAT
+    artist_id   VARCHAR(50) PRIMARY KEY,
+    name        VARCHAR(1024),
+    location    VARCHAR(1024),
+    latitude    FLOAT,
+    longitude   FLOAT
 );
 """)
 
+# Dimension Table: Time
 time_table_create = ("""
 CREATE TABLE IF NOT EXISTS time (
-    start_time TIMESTAMP PRIMARY KEY SORTKEY,
-    hour       INTEGER,
-    day        INTEGER,
-    week       INTEGER,
-    month      INTEGER,
-    year       INTEGER,
-    weekday    INTEGER
+    start_time  TIMESTAMP PRIMARY KEY SORTKEY,
+    hour        INTEGER,
+    day         INTEGER,
+    week        INTEGER,
+    month       INTEGER,
+    year        INTEGER,
+    weekday     INTEGER
 );
 """)
+
 
 staging_events_copy = f"""
 COPY staging_events
