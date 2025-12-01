@@ -1,3 +1,15 @@
+import configparser
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+config = configparser.ConfigParser()
+config.read('dwh.cfg')
+
+AWS_KEY = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET = os.getenv("AWS_SECRET_ACCESS_KEY")
+
+
 # DROP TABLES
 staging_events_table_drop = "DROP TABLE IF EXISTS staging_events;"
 staging_songs_table_drop = "DROP TABLE IF EXISTS staging_songs;"
@@ -119,6 +131,7 @@ FORMAT AS JSON 'auto'
 REGION 'us-west-2';
 """).format(config['S3']['SONG_DATA'], 
            config['IAM_ROLE']['ARN'])
+
 
 songplay_table_insert = ("""
 INSERT INTO songplays (
