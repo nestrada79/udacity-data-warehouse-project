@@ -1,0 +1,22 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+env/
+venv/
+ENV/
+.venv/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# AWS credentials
+*.pem
+*.key
+*credentials*
+*config*
+
+# Local config files (NEVER push real passwords)
