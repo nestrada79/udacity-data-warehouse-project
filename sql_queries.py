@@ -113,24 +113,21 @@ CREATE TABLE IF NOT EXISTS time (
 );
 """)
 
-staging_events_copy = ("""
+staging_events_copy = f"""
 COPY staging_events
-FROM '{}'
-IAM_ROLE '{}'
-FORMAT AS JSON '{}'
-REGION 'us-west-2';
-""").format(config['S3']['LOG_DATA'], 
-           config['IAM_ROLE']['ARN'], 
-           config['S3']['LOG_JSONPATH'])
+FROM '{config['S3']['LOG_DATA']}'
+CREDENTIALS 'aws_access_key_id={AWS_KEY};aws_secret_access_key={AWS_SECRET}'
+FORMAT AS JSON '{config['S3']['LOG_JSONPATH']}'
+REGION '{config['REGION']['NAME']}';
+"""
 
-staging_songs_copy = ("""
+staging_songs_copy = f"""
 COPY staging_songs
-FROM '{}'
-IAM_ROLE '{}'
+FROM '{config['S3']['SONG_DATA']}'
+CREDENTIALS 'aws_access_key_id={AWS_KEY};aws_secret_access_key={AWS_SECRET}'
 FORMAT AS JSON 'auto'
-REGION 'us-west-2';
-""").format(config['S3']['SONG_DATA'], 
-           config['IAM_ROLE']['ARN'])
+REGION '{config['REGION']['NAME']}';
+"""
 
 
 songplay_table_insert = ("""
